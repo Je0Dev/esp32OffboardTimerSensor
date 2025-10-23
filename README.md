@@ -1,0 +1,1 @@
+#a simple demo esp32-line-follower lap-tracker system that i made to monitor the active minutes and the paused minutes(obstacle found) and then send the data to the terminal(logging) and over a ble app.for issues and bugs please reach out
