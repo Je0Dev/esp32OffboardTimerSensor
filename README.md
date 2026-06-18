@@ -1,33 +1,38 @@
-# ESP32 IR Lap Timer (Serial-Only)
-
-This is a simple, clean, and maintainable lap timer for an ESP32 using a single IR (infrared) sensor. It is designed to be highly robust, with no display required. The entire "UI" is handled through the built-in BOOT button and the Arduino Serial Monitor.
-
-This project is built using C++ with an object-oriented, multi-file structure for maximum maintainability and readability.
-
-## 🏁 Key Features
-
-* **State Machine Logic:** The timer operates on a clean, easy-to-understand state machine.
-* **Robust Sensor Calibration:** A guided, multi-sample averaging process ensures the sensor threshold is set reliably, even with noisy sensors. It supports the full `0` (broken) to `4095` (clear) ADC range.
-* **Intelligent Lap Timing:** A lap is not just a simple "tripwire." It is defined as the time from the lap start until the moment an obstacle **clears** the beam, providing a more accurate "finish line" behavior.
-* **Obstacle Time:** The timer *also* records how long the beam was broken, giving you a new data point for analysis.
-* **Hardware Feedback:** The built-in LED turns ON when the beam is broken and OFF when it is cleared.
-* **Clean Code:** Logic is encapsulated into separate classes (`LapTimer`, `Sensor`, `Button`, `RaceTimer`) to make the code easy to read and extend.
-* **Race Summary:** Automatically prints a formatted table of all completed laps, total time, and obstacle time.
+# ESP32 Offboard  IR Lap Timer (Serial-Only Version)
 
 ---
 
-## Hardware Setup
+> Sadly this was not properly tested on any real life simulations with actualy obstacles(other than my hand, some books and a couple of pens). Keep that in mind!
+
+This is a *simple, clean, and maintainable* lap timer *tested only* for an ESP32 using a single IR (infrared) sensor. It is designed to be highly robust, with no display required. The entire "UI" is handled through the built-in BOOT button and the Arduino Serial Monitor.
+
+This project is built using basic C++ with an *object-oriented, multi-file structure for maximum maintainability and readability*.
+
+## 🏁 Features
+
+* **🦾State Machine Logic:** The timer operates on a clean, easy-to-understand state machine.
+* **🤖 Robust Sensor Calibration:** A guided, multi-sample averaging process ensures the sensor threshold is set reliably, even with noisy sensors. It supports the full `0` (broken) to `4095` (clear) ADC range.
+* **⚙️ Intelligent Lap Timing:** A lap is not just a simple "tripwire." It is defined as the time from the lap start until the moment an obstacle **clears** the beam, providing a more accurate "finish line" behavior.
+* **🤖 Obstacle Time:** The timer *also* records how long the beam was broken, giving you a new data point for analysis.
+* **🦾 Hardware Feedback:** The built-in LED turns ON when the beam is broken and OFF when it is cleared(this worked *almost* all of the times).
+* **⚙️ Clean Code:** Logic is encapsulated into separate classes (`LapTimer`, `Sensor`, `Button`, `RaceTimer`) to make the code easy to read and extend.
+* **⚙️ Race Summary:** Automatically prints a formatted table of all completed laps, total time, and obstacle time.
+
+---
+
+## 🦾 Setup
 
 You only need an ESP32 and a 3-pin IR sensor module.
 
 * **IR Sensor (Analog Out)**: `Sensor A0` -> `ESP32 GPIO 32`
-    * *(This must be a safe ADC1 pin, like 32, 33, 34, 35, 36, or 39)*
-* **BOOT Button**: `GPIO 0` (Built-in to most ESP32 dev boards)
-* **LED**: `GPIO 2` (The built-in blue LED)
+    * *(This must be a safe ADC1 pin, like 32, 33, 34, 35, 36, or 39, for it to work right)*
+    * *(Check pin layout to make sure that you connect everything right)*
+* **BOOT Button**: `GPIO 0` (Built-in to most ESP32 dev boards,such as mine)
+* **LED**: `GPIO 2` (The built-in blue LED that mine had)
 
 ---
 
-## 🚀 How it Works: The User's Guide
+## 🚀 The User's Guide
 
 This entire project is controlled using the Serial Monitor and the `BOOT` button.
 
@@ -36,7 +41,7 @@ This entire project is controlled using the Serial Monitor and the `BOOT` button
 * Connect your ESP32, build, and upload the code.
 * Open the Serial Monitor at **115200 baud**. You will be greeted with the first step.
 
-### 2. Step 1: Learn "Clear Beam"
+### 2.  Learn "Clear Beam" Step
 
 The timer must first learn what a clear, unbroken beam looks like.
 
@@ -46,7 +51,7 @@ The timer must first learn what a clear, unbroken beam looks like.
 * **Action:** **Release** the button after 1-2 seconds.
 * If the reading is valid (e.g., `>= 1000`), it will be accepted, and you'll move to the next step.
 
-### 3. Step 2: Learn "Broken Beam"
+### 3. Learn "Broken Beam" Step
 
 Now, the timer needs to learn what an obstacle looks like.
 
@@ -56,7 +61,7 @@ Now, the timer needs to learn what an obstacle looks like.
 * **Action:** **Release** the button.
 * If the reading is valid (e.g., `< 1000`), the system will calculate the midpoint threshold and arm the timer.
 
-### 4. Step 3: Start the Race
+### 4. Start the Race!!!
 
 The system is now active and "Waiting for robot..."
 
@@ -66,9 +71,9 @@ The system is now active and "Waiting for robot..."
 * **Action:** Do a single, **short press** of the `BOOT` button to confirm.
 * The race immediately starts, and the timer is running for Lap 1.
 
-### 5. Step 4: Timing Laps (New Logic!)
+### 5. Timing Laps
 
-The race is now active. This is where the new logic comes in:
+The race is now active. This is where this logic comes in:
 
 1.  When the robot **first breaks the beam**:
     * The built-in blue LED will turn **ON**.
@@ -80,7 +85,7 @@ The race is now active. This is where the new logic comes in:
     * The system records the **Total Lap Time** (from start-to-clear) and the **Obstacle Time** (from broken-to-clear).
     * The lap summary is printed, and the next lap begins immediately.
 
-### 6. Step 5: Stop the Race & Get Summary
+### 6. Stop the Race & Get Simple Compact Summary
 
 You can stop the race at any time.
 
@@ -91,7 +96,7 @@ You can stop the race at any time.
 
 ---
 
-## 🛠️ Project Structure (For Developers)
+## 🛠️ Project Structure
 
 This project is broken into classes to separate concerns.
 
@@ -133,3 +138,15 @@ This project is set up for **PlatformIO**.
 3.  Open the project folder in VS Code (it should automatically detect it's a PlatformIO project).
 4.  Click the "Build" and "Upload" buttons in the PlatformIO toolbar (usually at the bottom of the VS Code window).
 5.  Open the Serial Monitor to begin.
+
+
+## ⚙️ MIT Licence
+
+Copyright © 2026 Je0Dev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
