@@ -1,26 +1,11 @@
-# ESP32 Offboard  IR Lap Timer (Serial-Only Version)
+# ESP32 Offboard  IR Lap Timer (Serial Version)
+
+---
+This is a *simple* lap timer *tested only* for an ESP32 using a single IR (infrared) sensor. It is designed to be highly robust, with no display required. The entire "UI" is handled through the built-in BOOT button and the Arduino Serial Monitor.
 
 ---
 
-> Sadly this was not properly tested on any real life simulations with actualy obstacles(other than my hand, some books and a couple of pens). Keep that in mind!
-
-This is a *simple, clean, and maintainable* lap timer *tested only* for an ESP32 using a single IR (infrared) sensor. It is designed to be highly robust, with no display required. The entire "UI" is handled through the built-in BOOT button and the Arduino Serial Monitor.
-
-This project is built using basic C++ with an *object-oriented, multi-file structure for maximum maintainability and readability*.
-
-## 🏁 Features
-
-* **🦾State Machine Logic:** The timer operates on a clean, easy-to-understand state machine.
-* **🤖 Robust Sensor Calibration:** A guided, multi-sample averaging process ensures the sensor threshold is set reliably, even with noisy sensors. It supports the full `0` (broken) to `4095` (clear) ADC range.
-* **⚙️ Intelligent Lap Timing:** A lap is not just a simple "tripwire." It is defined as the time from the lap start until the moment an obstacle **clears** the beam, providing a more accurate "finish line" behavior.
-* **🤖 Obstacle Time:** The timer *also* records how long the beam was broken, giving you a new data point for analysis.
-* **🦾 Hardware Feedback:** The built-in LED turns ON when the beam is broken and OFF when it is cleared(this worked *almost* all of the times).
-* **⚙️ Clean Code:** Logic is encapsulated into separate classes (`LapTimer`, `Sensor`, `Button`, `RaceTimer`) to make the code easy to read and extend.
-* **⚙️ Race Summary:** Automatically prints a formatted table of all completed laps, total time, and obstacle time.
-
----
-
-## 🦾 Setup
+##  Setup
 
 You only need an ESP32 and a 3-pin IR sensor module.
 
@@ -32,7 +17,7 @@ You only need an ESP32 and a 3-pin IR sensor module.
 
 ---
 
-## 🚀 The User's Guide
+## Guid
 
 This entire project is controlled using the Serial Monitor and the `BOOT` button.
 
@@ -95,58 +80,12 @@ You can stop the race at any time.
 * The system will enter a "Finished" state. To run another race, you must restart the ESP32.
 
 ---
-
-## 🛠️ Project Structure
-
-This project is broken into classes to separate concerns.
-
-* `src/main.cpp`
-    * The main Arduino entry point.
-    * It only contains a single global `LapTimer` object.
-    * It calls `timer.begin()` in `setup()` and `timer.update()` in `loop()`.
-
-* `src/LapTimer.h` / `src/LapTimer.cpp`
-    * This is the main "application" class.
-    * It *owns* the Sensor, Button, and RaceTimer objects.
-    * It contains the main `State` machine enum.
-    * It directs all the logic (e.g., "in this state, check for a button press; in that state, check for a sensor cross").
-    * It manages the "is obstacle detected" sub-state during a race.
-
-* `src/Sensor.h` / `src/Sensor.cpp`
-    * Handles all sensor-specific logic.
-    * Reads the ADC pin.
-    * Contains the calibration logic (averaging samples).
-    * Provides a simple `isBeamBroken()` method.
-
-* `src/Button.h` / `src/Button.cpp`
-    * A reusable button-handling class.
-    * Manages all debouncing logic.
-    * Detects `isPressed()`, `wasShortPressed()`, and `wasLongPressed()`.
-
-* `src/RaceTimer.h` / `src/RaceTimer.cpp`
-    * Handles all time-keeping and data storage.
-    * Stores lap times in a `std::vector<LapData>`, which now includes `obstacleTimeMs`.
-    * Provides methods like `start()`, `stop()`, and `recordLap()`.
-    * Contains the `printSummary()` logic, now with the new "Obstacle (s)" column.
-
-## 🔨 How to Build
-
-This project is set up for **PlatformIO**.
-
+## Building Steps
 1.  Make sure you have [Visual Studio Code](https://code.visualstudio.com/) with the [PlatformIO IDE extension](https://platformio.org/platformio-ide) installed.
-2.  Clone or download this repository.
-3.  Open the project folder in VS Code (it should automatically detect it's a PlatformIO project).
-4.  Click the "Build" and "Upload" buttons in the PlatformIO toolbar (usually at the bottom of the VS Code window).
-5.  Open the Serial Monitor to begin.
+2.  Clone repo.
+3.  Click the "Build" and "Upload" buttons in the PlatformIO toolbar
+4.  Open the Serial Monitor to begin.
 
-
-## ⚙️ MIT Licence
-
-Copyright © 2026 Je0Dev
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+---
+## Licence
+- https://en.wikipedia.org/wiki/MIT_License 
